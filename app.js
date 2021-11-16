@@ -66,7 +66,7 @@ app.get('/login', async (req, res) => {
             method:"GET",
             url:"https://reliant-admin.herokuapp.com/login",
             headers: {
-                callback: "http://localhost:3000/"
+                callback: "https://guide-flashfund.herokuapp.com/"
             }
         });
 
