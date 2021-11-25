@@ -23,13 +23,67 @@ console.log(`Listening on ${config.host}:${config.port}`);
 
 
 
-app.get('/', async (req, res)=>{
+// app.get('/', async (req, res)=>{
+//     console.log(req.cookies['x-access-token'])
+//     const token = req.cookies['x-access-token'];
+
+//     const _token = req.query.auth;
+
+
+
+//     if(!token && !_token) return res.redirect('/login');
+
+//     if(_token) {
+//         res.cookie('x-access-token', _token, {maxAge:90000, httpOnly:false});
+
+//         return res.redirect('/');
+//     }
+
+//     try {
+//         const isAuthenticated = await axios({
+//             method:"GET",
+//             url: "https://reliant-admin.herokuapp.com/api/v1/user/info",
+//             headers: {
+//                 clientId:27590,
+//                 Authorization: token
+//             }
+//         })
+
+//         if(isAuthenticated.data.success == false) return res.redirect('/login');
+
+//         if(isAuthenticated.data.isUser == false) return res.redirect('/login');
+        
+//         return res.sendFile(path.join(__dirname, '/static/guide.html'));
+//     } catch (error) {
+//         return res.redirect('/login');
+//     }
+// });
+app.get('/login', async (req, res) => {
+    try {
+        const response = await axios({
+            method:"GET",
+            url:"https://reliant-admin.herokuapp.com/login",
+            headers: {
+                callback: "https://guide.flashfund.io/"
+            }
+        });
+
+        const data = response.data;
+
+        return res.redirect(data.loginUrl);
+    } catch (error) {
+        return error;
+    }
+});
+
+
+app.get('*', async (req, res)=>{
     console.log(req.cookies['x-access-token'])
     const token = req.cookies['x-access-token'];
 
     const _token = req.query.auth;
 
-
+    console.log(token, _token)
 
     if(!token && !_token) return res.redirect('/login');
 
@@ -49,7 +103,6 @@ app.get('/', async (req, res)=>{
             }
         })
 
-        console.log(isAuthenticated.data)
         if(isAuthenticated.data.success == false) return res.redirect('/login');
 
         if(isAuthenticated.data.isUser == false) return res.redirect('/login');
@@ -57,24 +110,6 @@ app.get('/', async (req, res)=>{
         return res.sendFile(path.join(__dirname, '/static/guide.html'));
     } catch (error) {
         return res.redirect('/login');
-    }
-});
-
-app.get('/login', async (req, res) => {
-    try {
-        const response = await axios({
-            method:"GET",
-            url:"https://reliant-admin.herokuapp.com/login",
-            headers: {
-                callback: "https://guide.flashfund.io/"
-            }
-        });
-
-        const data = response.data;
-
-        return res.redirect(data.loginUrl);
-    } catch (error) {
-        return error;
     }
 });
 
